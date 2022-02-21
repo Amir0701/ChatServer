@@ -30,4 +30,8 @@ public class UserController {
         return ResponseEntity.ok(userService.register(example, bindingResult));
     }
 
+    @PostMapping("/session")
+    public ResponseEntity<UserSecurityTokensDto> login(@RequestBody UserDto credentials) {
+        return ResponseEntity.ok(userService.login(credentials));
+    }
 }

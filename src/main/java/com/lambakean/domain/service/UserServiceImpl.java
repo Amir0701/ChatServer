@@ -12,6 +12,7 @@ import com.lambakean.representation.dtoConverter.UserDtoConverter;
 import com.lambakean.representation.dtoConverter.UserSecurityTokensDtoConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.BindingResult;
@@ -19,9 +20,8 @@ import org.springframework.validation.FieldError;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
-import javax.validation.Validator;
 import java.util.Collections;
-import java.util.Set;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Component
@@ -71,6 +71,58 @@ public class UserServiceImpl implements UserService {
         user.setRefreshTokenWrappers(Collections.emptySet());
         user.setSubscriptions(Collections.emptySet());
 
+        checkFieldsUniqueness(user);
+
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+
+        try {
+            userRepository.saveAndFlush(user);
+        } catch (ConstraintViolationException e) {
+            throw new InvalidEntityException(
+                    e.getConstraintViolations().stream()
+                            .map(ConstraintViolation::getMessage)
+                            .collect(Collectors.toSet())
+            );
+        }
+
+        return generateAndSaveSecurityTokens(user);
+    }
+
+    @Override
+    public UserSecurityTokensDto login(UserDto credentials) {
+
+        String exceptionMsg = "Couldn't find the user with provided nickname and password";
+
+        User user = Optional.ofNullable(userRepository.findByNickname(credentials.getNickname()))
+            .orElseThrow(
+                () -> new BadCredentialsException(exceptionMsg)
+            );
+
+        if(!passwordEncoder.matches(credentials.getPassword(), user.getPassword())) {
+            throw new BadCredentialsException(exceptionMsg);
+        }
+
+        return generateAndSaveSecurityTokens(user);
+    }
+
+    private UserSecurityTokensDto generateAndSaveSecurityTokens(User user) {
+
+        String accessToken = jwtTokenProvider.createToken(user.getId(), accessTokenValidityTimeMs);
+        String refreshToken = jwtTokenProvider.createToken(user.getId(), refreshTokenValidityTimeMs);
+
+        RefreshTokenWrapper refreshTokenWrapper = refreshTokenWrapperService.createWrapper(
+                refreshToken,
+                refreshTokenValidityTimeMs,
+                user
+        );
+        refreshTokenWrapperService.save(refreshTokenWrapper);
+
+        return userSecurityTokensDtoConverter.toSecurityTokensDto(user, accessToken, refreshToken);
+
+    }
+
+    private void checkFieldsUniqueness(User user) {
+
         if(userRepository.existsByName(user.getName())) {
             throw new EntityAlreadyExistsException(String.format("User with name [%s] already exists", user.getName()));
         }
@@ -86,29 +138,5 @@ public class UserServiceImpl implements UserService {
                     String.format("User with email [%s] already exists", user.getEmail())
             );
         }
-
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-
-        try {
-            userRepository.saveAndFlush(user);
-        } catch (ConstraintViolationException e) {
-            throw new InvalidEntityException(
-                    e.getConstraintViolations().stream()
-                            .map(ConstraintViolation::getMessage)
-                            .collect(Collectors.toSet())
-            );
-        }
-
-        String accessToken = jwtTokenProvider.createToken(user.getId(), accessTokenValidityTimeMs);
-        String refreshToken = jwtTokenProvider.createToken(user.getId(), refreshTokenValidityTimeMs);
-
-        RefreshTokenWrapper refreshTokenWrapper = refreshTokenWrapperService.createWrapper(
-                refreshToken,
-                refreshTokenValidityTimeMs,
-                user
-        );
-        refreshTokenWrapperService.save(refreshTokenWrapper);
-
-        return userSecurityTokensDtoConverter.toSecurityTokensDto(user, accessToken, refreshToken);
     }
 }

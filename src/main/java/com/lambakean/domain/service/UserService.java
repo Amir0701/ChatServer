@@ -8,4 +8,5 @@ public interface UserService {
 
     UserSecurityTokensDto register(UserDto example, BindingResult bindingResult);
 
+    UserSecurityTokensDto login(UserDto credentials);
 }
