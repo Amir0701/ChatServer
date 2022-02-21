@@ -1,6 +1,7 @@
 package com.lambakean.data.model;
 
 import javax.persistence.*;
+import javax.validation.constraints.*;
 import java.util.Set;
 
 @Entity
@@ -11,15 +12,19 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotNull(message = "The name cannot be empty")
     @Column(nullable = false)
     private String name;
 
+    @NotNull  // todo msg
     @Column(unique = true, nullable = false)
     private String nickname;
 
+    @NotNull  // todo msg
     @Column(unique = true, nullable = false)
     private String email;
 
+    @NotNull  // todo msg
     @Column(nullable = false)
     private String password;
 

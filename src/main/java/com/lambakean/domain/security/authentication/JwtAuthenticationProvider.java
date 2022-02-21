@@ -1,26 +1,26 @@
 package com.lambakean.domain.security.authentication;
 
-import com.lambakean.data.model.RefreshTokenWrapper;
 import com.lambakean.data.model.User;
-import com.lambakean.data.repository.RefreshTokenWrapperRepository;
+import com.lambakean.data.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
-
-import java.util.Optional;
 
 @Component
 public class JwtAuthenticationProvider implements AuthenticationProvider {
 
-    private final RefreshTokenWrapperRepository refreshTokenWrapperRepository;
+    private final JwtTokenProvider jwtTokenProvider;
+    private final UserRepository userRepository;
 
     @Autowired
-    public JwtAuthenticationProvider(RefreshTokenWrapperRepository refreshTokenWrapperRepository) {
-        this.refreshTokenWrapperRepository = refreshTokenWrapperRepository;
+    public JwtAuthenticationProvider(JwtTokenProvider jwtTokenProvider, UserRepository userRepository) {
+        this.jwtTokenProvider = jwtTokenProvider;
+        this.userRepository = userRepository;
     }
 
     @Override
@@ -28,18 +28,27 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
 
         String token = authentication.getCredentials().toString();
 
-        Optional<RefreshTokenWrapper> refreshTokenWrapperOptional = Optional.ofNullable(
-                refreshTokenWrapperRepository.findByToken(token)
-        );
+        Long userId = jwtTokenProvider.getUserId(token);
 
-        if(!refreshTokenWrapperOptional.isPresent() || !refreshTokenWrapperOptional.get().isValid()) {
-            throw new BadCredentialsException(String.format("The token [%s] is invalid", token));
+        if(jwtTokenProvider.isExpired(token)) {
+            throw new BadCredentialsException(String.format("The access token [%s] is invalid", token));
         }
 
-        User user = refreshTokenWrapperOptional.get().getUser();
+        User currentUser = userRepository.findById(userId).orElseThrow(
+                () -> new BadCredentialsException(String.format(
+                        "The token [%s] is valid, but the user with id [%s] couln't be found.",
+                        token,
+                        userId)
+                )
+        );
 
-        Authentication authenticationToken = new JwtAuthenticationToken(token, user);
+
+        Authentication authenticationToken = new JwtAuthenticationToken(token, currentUser);
         authenticationToken.setAuthenticated(true);
+
+        SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+
+        System.out.printf("THE CURRENT USER IS [%s]\n", currentUser.getNickname());  // todo remove
 
         return authenticationToken;
     }

@@ -1,11 +1,26 @@
 package com.lambakean.representation.dto;
 
+import javax.validation.constraints.Email;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
+
 public class UserDto {
 
     private Long id;
+
+    @Size(min = 1, max = 50, message = "The length of the name must be between 1 and 50 characters.")
     private String name;
+
+    @Size(min = 1, max = 50)  // todo write msg
     private String nickname;
+
+    @Email  // todo msg
+    @Pattern(regexp = "^.+@.+\\..+$")  // todo msg
+    @Size(min = 5, max = 100)  // todo msg
     private String email;
+
+    @Pattern(regexp = "^[a-zA-Z]+.*$")  // todo msg
+    @Size(min = 6, max = 100)  // todo msg
     private String password;
 
 

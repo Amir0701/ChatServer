@@ -8,8 +8,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
+import java.util.Date;
 
 @Component
 public class JwtTokenProvider {
@@ -17,16 +20,12 @@ public class JwtTokenProvider {
     @Value("${jwt.token.secret}")
     private String secret;
 
-    @Value("${jwt.token.validityTimeMs}")
-    private Long validityTimeMs;
-
     public String createToken(@NonNull Long userId, @NonNull Long validityTimeMs) {
-
-        // todo handle the situation when the secret is null
 
         Claims claims = Jwts.claims();
 
-        LocalDateTime expiresAt = LocalDateTime.now().plus(validityTimeMs, ChronoUnit.MILLIS);
+        Date now = new Date();
+        Date expiresAt = new Date(now.getTime() + validityTimeMs);
 
         claims.put("userId", userId);
         claims.put("expiresAt", expiresAt);
@@ -39,10 +38,21 @@ public class JwtTokenProvider {
 
     public Long getUserId(@NonNull String token) {
 
-        // todo handle the situation when the secret is null
-
         Jws<Claims> claims = Jwts.parser().setSigningKey(secret).parseClaimsJws(token);
 
         return (Long) claims.getBody().get("userId");
+    }
+
+    public LocalDateTime getExpirationDate(@NonNull String token) {
+
+        Jws<Claims> claims = Jwts.parser().setSigningKey(secret).parseClaimsJws(token);
+
+        Date expiresAt = (Date) claims.getBody().get("expiresAt");
+
+        return LocalDateTime.ofInstant(expiresAt.toInstant(), ZoneId.systemDefault());
+    }
+
+    public boolean isExpired(@NonNull String token) {
+        return LocalDateTime.now().isBefore(getExpirationDate(token));
     }
 }
