@@ -23,8 +23,6 @@ public class Message {
     @Column(nullable = false)
     private LocalDateTime whenCreated;
 
-    @Column(nullable = false, length = 5000)
-    private String text;
 
     @OneToMany(mappedBy = "message", fetch = FetchType.EAGER)
     private Set<Image> images;
@@ -62,13 +60,6 @@ public class Message {
         this.whenCreated = whenCreated;
     }
 
-    public String getText() {
-        return text;
-    }
-
-    public void setText(String text) {
-        this.text = text;
-    }
 
     public Set<Image> getImages() {
         return images;

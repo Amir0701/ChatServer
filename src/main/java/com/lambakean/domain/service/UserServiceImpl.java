@@ -5,6 +5,7 @@ import com.lambakean.data.model.User;
 import com.lambakean.data.repository.UserRepository;
 import com.lambakean.domain.exception.EntityAlreadyExistsException;
 import com.lambakean.domain.exception.InvalidEntityException;
+import com.lambakean.domain.exception.UserNotLoggedInException;
 import com.lambakean.domain.security.authentication.JwtTokenProvider;
 import com.lambakean.representation.dto.UserDto;
 import com.lambakean.representation.dto.UserSecurityTokensDto;
@@ -13,6 +14,7 @@ import com.lambakean.representation.dtoConverter.UserSecurityTokensDtoConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.BindingResult;
@@ -103,6 +105,67 @@ public class UserServiceImpl implements UserService {
         }
 
         return generateAndSaveSecurityTokens(user);
+    }
+
+    @Override
+    public UserDto delete(Long id) {
+        User currentUser = getCurrentUser();
+        if(currentUser == null)
+            throw new UserNotLoggedInException("You must be logged in to delete your account");
+
+        if(currentUser.getId().equals(id)){
+            throw new RuntimeException();
+        }
+
+        userRepository.delete(currentUser);
+        return userDtoConverter.toUserDto(currentUser);
+    }
+
+    @Override
+    public User getCurrentUser() {
+        User currentUser = (User)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return currentUser;
+    }
+
+    @Override
+    public UserDto change(UserDto userDto, BindingResult bindingResult) {
+        if(bindingResult.hasErrors()) {
+            throw new InvalidEntityException(
+                    bindingResult.getFieldErrors().stream()
+                            .map(FieldError::getDefaultMessage)
+                            .collect(Collectors.toSet())
+            );
+        }
+
+
+        User user = userDtoConverter.toUser(userDto);
+        User currentUser = getCurrentUser();
+        if(user.getName() != null){
+            currentUser.setName(user.getName());
+        }
+
+        if(user.getNickname() != null){
+            changeNickname(currentUser, user.getNickname());
+        }
+
+        if(user.getPassword() != null){
+            currentUser.setPassword(user.getPassword());
+        }
+
+        userRepository.save(currentUser);
+
+        UserDto changedUserDto = userDtoConverter.toUserDto(currentUser);
+        return changedUserDto;
+    }
+
+    private void changeNickname(User currentUser, String nickname){
+        boolean existNickname = userRepository.existsByNickname(nickname);
+
+        if(existNickname){
+            throw new RuntimeException();
+        }
+
+        currentUser.setNickname(nickname);
     }
 
     private UserSecurityTokensDto generateAndSaveSecurityTokens(User user) {
