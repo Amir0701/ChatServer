@@ -5,9 +5,11 @@ import com.lambakean.representation.dto.UserDto;
 import com.lambakean.representation.dto.UserSecurityTokensDto;
 import org.springframework.validation.BindingResult;
 
+import java.util.concurrent.CompletableFuture;
+
 public interface UserService {
 
-    UserSecurityTokensDto register(UserDto example, BindingResult bindingResult);
+    CompletableFuture<UserSecurityTokensDto> register(UserDto example, BindingResult bindingResult);
 
     UserSecurityTokensDto login(UserDto credentials);
 

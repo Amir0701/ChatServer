@@ -13,6 +13,7 @@ import com.lambakean.representation.dtoConverter.UserDtoConverter;
 import com.lambakean.representation.dtoConverter.UserSecurityTokensDtoConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -24,6 +25,7 @@ import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import java.util.Collections;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 @Component
@@ -58,8 +60,9 @@ public class UserServiceImpl implements UserService {
         this.passwordEncoder = passwordEncoder;
     }
 
+    @Async
     @Override
-    public UserSecurityTokensDto register(UserDto example, BindingResult bindingResult) {
+    public CompletableFuture<UserSecurityTokensDto> register(UserDto example, BindingResult bindingResult) {
 
         if(bindingResult.hasErrors()) {
             throw new InvalidEntityException(
@@ -87,7 +90,7 @@ public class UserServiceImpl implements UserService {
             );
         }
 
-        return generateAndSaveSecurityTokens(user);
+        return CompletableFuture.completedFuture(generateAndSaveSecurityTokens(user));
     }
 
     @Override

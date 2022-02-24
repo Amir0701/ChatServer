@@ -10,6 +10,8 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 @RestController
 @RequestMapping("/api/v1/user")
@@ -24,8 +26,12 @@ public class UserController {
 
     @PostMapping
     public ResponseEntity<UserSecurityTokensDto> register(@RequestBody @Valid UserDto example,
-                                                          BindingResult bindingResult) {
-        return ResponseEntity.ok(userService.register(example, bindingResult));
+                                                          BindingResult bindingResult)
+            throws ExecutionException, InterruptedException {
+
+        UserSecurityTokensDto result = userService.register(example, bindingResult).get();
+
+        return ResponseEntity.ok(result);
     }
 
     @PostMapping("/session")
