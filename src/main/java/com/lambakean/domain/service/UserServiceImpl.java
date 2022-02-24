@@ -127,8 +127,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User getCurrentUser() {
-        User currentUser = (User)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return currentUser;
+        return (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     }
 
     @Override
@@ -155,8 +154,7 @@ public class UserServiceImpl implements UserService {
 
         userRepository.save(currentUser);
 
-        UserDto changedUserDto = userDtoConverter.toUserDto(currentUser);
-        return changedUserDto;
+        return userDtoConverter.toUserDto(currentUser);
     }
 
     private void changeNickname(User currentUser, String nickname){
