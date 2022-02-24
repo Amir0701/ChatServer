@@ -11,7 +11,7 @@ public interface UserService {
 
     CompletableFuture<UserSecurityTokensDto> register(UserDto example, BindingResult bindingResult);
 
-    UserSecurityTokensDto login(UserDto credentials);
+    CompletableFuture<UserSecurityTokensDto> login(UserDto credentials);
 
     UserDto delete(Long id);
 

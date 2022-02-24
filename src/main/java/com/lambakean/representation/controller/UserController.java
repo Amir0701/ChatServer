@@ -35,8 +35,12 @@ public class UserController {
     }
 
     @PostMapping("/session")
-    public ResponseEntity<UserSecurityTokensDto> login(@RequestBody UserDto credentials) {
-        return ResponseEntity.ok(userService.login(credentials));
+    public ResponseEntity<UserSecurityTokensDto> login(@RequestBody UserDto credentials)
+            throws ExecutionException, InterruptedException {
+
+        UserSecurityTokensDto result = userService.login(credentials).get();
+
+        return ResponseEntity.ok(result);
     }
 
     @DeleteMapping( "/{id}")

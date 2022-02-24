@@ -93,8 +93,9 @@ public class UserServiceImpl implements UserService {
         return CompletableFuture.completedFuture(generateAndSaveSecurityTokens(user));
     }
 
+    @Async
     @Override
-    public UserSecurityTokensDto login(UserDto credentials) {
+    public CompletableFuture<UserSecurityTokensDto> login(UserDto credentials) {
 
         String exceptionMsg = "Couldn't find the user with provided nickname and password";
 
@@ -107,7 +108,7 @@ public class UserServiceImpl implements UserService {
             throw new BadCredentialsException(exceptionMsg);
         }
 
-        return generateAndSaveSecurityTokens(user);
+        return CompletableFuture.completedFuture(generateAndSaveSecurityTokens(user));
     }
 
     @Override
