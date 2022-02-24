@@ -148,9 +148,6 @@ public class UserServiceImpl implements UserService {
             changeNickname(currentUser, user.getNickname());
         }
 
-        if(user.getPassword() != null){
-            currentUser.setPassword(user.getPassword());
-        }
 
         userRepository.save(currentUser);
 
