@@ -1,13 +1,11 @@
 package com.lambakean.representation.dto;
 
-import com.lambakean.data.model.Role;
-
 public class SubscriptionDto {
 
     private Long id;
     private Long chatId;
     private Long userId;
-    private Role userRole;
+    private RoleDto role;
 
 
     public Long getId() {
@@ -34,11 +32,11 @@ public class SubscriptionDto {
         this.userId = userId;
     }
 
-    public Role getUserRole() {
-        return userRole;
+    public RoleDto getRole() {
+        return role;
     }
 
-    public void setUserRole(Role userRole) {
-        this.userRole = userRole;
+    public void setRole(RoleDto role) {
+        this.role = role;
     }
 }

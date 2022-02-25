@@ -34,6 +34,12 @@ public class User {
     @OneToMany(mappedBy = "user")
     private Set<RefreshTokenWrapper> refreshTokenWrappers;
 
+    public User(Long id) {
+        this.id = id;
+    }
+
+    public User() {}
+
 
     public Long getId() {
         return id;

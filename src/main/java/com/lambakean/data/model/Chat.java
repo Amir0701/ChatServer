@@ -24,6 +24,12 @@ public class Chat {
     @OneToMany(mappedBy = "chat", fetch = FetchType.LAZY)
     private Set<Message> messages;
 
+    public Chat(Long id) {
+        this.id = id;
+    }
+
+    public Chat() {}
+
 
     public Long getId() {
         return id;
