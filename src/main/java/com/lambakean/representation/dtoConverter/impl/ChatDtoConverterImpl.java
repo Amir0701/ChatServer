@@ -6,8 +6,10 @@ import com.lambakean.representation.dtoConverter.ChatDtoConverter;
 import com.lambakean.representation.dtoConverter.MessageDtoConverter;
 import com.lambakean.representation.dtoConverter.SubscriptionDtoConverter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Component;
 
+import java.util.HashSet;
 import java.util.stream.Collectors;
 
 @Component
@@ -31,18 +33,28 @@ public class ChatDtoConverterImpl implements ChatDtoConverter {
         chat.setId(chatDto.getId());
         chat.setName(chatDto.getName());
         chat.setWhenCreated(chatDto.getWhenCreated());
-        chat.setMessages(
-                chatDto.getMessages()
-                        .stream()
-                        .map(messageDtoConverter::toMessage)
-                        .collect(Collectors.toSet())
-        );
-        chat.setSubscriptions(
-                chatDto.getSubscriptions()
-                        .stream()
-                        .map(subscriptionDtoConverter::toSubscription)
-                        .collect(Collectors.toSet())
-        );
+
+        if(chatDto.getMessages() != null) {
+            chat.setMessages(
+                    chatDto.getMessages()
+                            .stream()
+                            .map(messageDtoConverter::toMessage)
+                            .collect(Collectors.toSet())
+            );
+        } else {
+            chat.setMessages(new HashSet<>());
+        }
+
+        if(chatDto.getSubscriptions() != null) {
+            chat.setSubscriptions(
+                    chatDto.getSubscriptions()
+                            .stream()
+                            .map(subscriptionDtoConverter::toSubscription)
+                            .collect(Collectors.toSet())
+            );
+        } else {
+            chat.setSubscriptions(new HashSet<>());
+        }
 
         return chat;
     }

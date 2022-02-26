@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
 @RestController
@@ -27,10 +26,9 @@ public class ChatController {
     }
 
     @PostMapping
-    public ResponseEntity<ChatDto> create(@RequestBody @Valid ChatDto chatData, BindingResult bindingResult)
-            throws ExecutionException, InterruptedException {
+    public ResponseEntity<ChatDto> create(@RequestBody @Valid ChatDto chatData, BindingResult bindingResult) {
 
-        ChatDto createdChat = chatService.create(chatData, bindingResult).get();
+        ChatDto createdChat = chatService.create(chatData, bindingResult);
 
         return new ResponseEntity<>(createdChat, HttpStatus.CREATED);
     }

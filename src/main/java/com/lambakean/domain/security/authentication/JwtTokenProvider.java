@@ -28,10 +28,10 @@ public class JwtTokenProvider {
         Date expiresAt = new Date(now.getTime() + validityTimeMs);
 
         claims.put("userId", userId);
-        claims.put("expiresAt", expiresAt);
 
         return Jwts.builder()
                 .setClaims(claims)
+                .setExpiration(expiresAt)
                 .signWith(SignatureAlgorithm.HS256, secret)
                 .compact();
     }
@@ -40,19 +40,18 @@ public class JwtTokenProvider {
 
         Jws<Claims> claims = Jwts.parser().setSigningKey(secret).parseClaimsJws(token);
 
-        return (Long) claims.getBody().get("userId");
+        return claims.getBody().get("userId", Long.class);
     }
 
     public LocalDateTime getExpirationDate(@NonNull String token) {
 
         Jws<Claims> claims = Jwts.parser().setSigningKey(secret).parseClaimsJws(token);
-
-        Date expiresAt = (Date) claims.getBody().get("expiresAt");
+        Date expiresAt = claims.getBody().getExpiration();
 
         return LocalDateTime.ofInstant(expiresAt.toInstant(), ZoneId.systemDefault());
     }
 
     public boolean isExpired(@NonNull String token) {
-        return LocalDateTime.now().isBefore(getExpirationDate(token));
+        return LocalDateTime.now().isAfter(getExpirationDate(token));
     }
 }

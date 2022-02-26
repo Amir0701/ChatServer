@@ -1,5 +1,7 @@
 package com.lambakean.representation.dto;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
 import java.time.LocalDateTime;
 
 public class MessageDto {  // todo add validation constraints
@@ -7,7 +9,10 @@ public class MessageDto {  // todo add validation constraints
     private Long id;
     private Long chatId;
     private Long  userId;
+
+    @DateTimeFormat(pattern = "dd-MM-yyyy HH:mm:ss")
     private LocalDateTime whenCreated;
+
     // todo add ImageDto here
 
 

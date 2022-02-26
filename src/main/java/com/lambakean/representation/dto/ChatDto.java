@@ -2,6 +2,7 @@ package com.lambakean.representation.dto;
 
 import com.lambakean.data.model.Message;
 import com.lambakean.data.model.Subscription;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;
 import java.util.Set;
@@ -10,7 +11,10 @@ public class ChatDto {
 
     private Long id;
     private String name;
+
+    @DateTimeFormat(pattern = "dd-MM-yyyy HH:mm:ss")
     private LocalDateTime whenCreated;
+
     private Set<SubscriptionDto> subscriptions;
     private Set<MessageDto> messages;
 
