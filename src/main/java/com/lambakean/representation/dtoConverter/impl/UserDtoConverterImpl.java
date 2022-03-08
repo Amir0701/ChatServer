@@ -1,7 +1,8 @@
-package com.lambakean.representation.dtoConverter;
+package com.lambakean.representation.dtoConverter.impl;
 
 import com.lambakean.data.model.User;
 import com.lambakean.representation.dto.UserDto;
+import com.lambakean.representation.dtoConverter.UserDtoConverter;
 import org.springframework.stereotype.Component;
 
 @Component

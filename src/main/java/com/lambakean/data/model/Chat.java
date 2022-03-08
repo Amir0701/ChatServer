@@ -18,11 +18,17 @@ public class Chat {
     @Column(nullable = false)
     private LocalDateTime whenCreated;
 
-    @OneToMany(mappedBy = "chat", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "chat", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Set<Subscription> subscriptions;
 
     @OneToMany(mappedBy = "chat", fetch = FetchType.LAZY)
     private Set<Message> messages;
+
+    public Chat(Long id) {
+        this.id = id;
+    }
+
+    public Chat() {}
 
 
     public Long getId() {

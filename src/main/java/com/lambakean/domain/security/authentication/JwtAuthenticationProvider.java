@@ -46,10 +46,6 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
         Authentication authenticationToken = new JwtAuthenticationToken(token, currentUser);
         authenticationToken.setAuthenticated(true);
 
-        SecurityContextHolder.getContext().setAuthentication(authenticationToken);
-
-        System.out.printf("THE CURRENT USER IS [%s]\n", currentUser.getNickname());  // todo remove
-
         return authenticationToken;
     }
 

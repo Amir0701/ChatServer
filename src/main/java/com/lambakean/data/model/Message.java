@@ -27,6 +27,24 @@ public class Message {
     @OneToMany(mappedBy = "message", fetch = FetchType.EAGER)
     private Set<Image> images;
 
+    public Long getChatId() {
+
+        if(chat != null) {
+            return chat.getId();
+        }
+
+        return null;
+    }
+
+    public Long getUserId() {
+
+        if(user != null) {
+            return user.getId();
+        }
+
+        return null;
+    }
+
 
     public Long getId() {
         return id;
