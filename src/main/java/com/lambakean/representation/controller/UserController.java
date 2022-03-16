@@ -2,6 +2,7 @@ package com.lambakean.representation.controller;
 
 import com.lambakean.data.model.Chat;
 import com.lambakean.domain.service.UserService;
+import com.lambakean.representation.dto.PasswordDto;
 import com.lambakean.representation.dto.UserDto;
 import com.lambakean.representation.dto.UserSecurityTokensDto;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,4 +54,11 @@ public class UserController {
     public ResponseEntity<UserDto> change(@RequestBody @Valid UserDto user, BindingResult bindingResult){
         return ResponseEntity.ok(userService.change(user, bindingResult));
     }
+
+    @PutMapping
+    public ResponseEntity<UserDto> updatePassword(@RequestBody @Valid PasswordDto passwordDto,
+                                                  BindingResult bindingResult){
+        return ResponseEntity.ok(userService.changePassword(passwordDto, bindingResult));
+    }
+
 }

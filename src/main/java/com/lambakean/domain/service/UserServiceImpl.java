@@ -7,6 +7,7 @@ import com.lambakean.domain.exception.EntityAlreadyExistsException;
 import com.lambakean.domain.exception.InvalidEntityException;
 import com.lambakean.domain.exception.UserNotLoggedInException;
 import com.lambakean.domain.security.authentication.JwtTokenProvider;
+import com.lambakean.representation.dto.PasswordDto;
 import com.lambakean.representation.dto.UserDto;
 import com.lambakean.representation.dto.UserSecurityTokensDto;
 import com.lambakean.representation.dtoConverter.UserDtoConverter;
@@ -155,6 +156,25 @@ public class UserServiceImpl implements UserService {
         userRepository.save(currentUser);
 
         return userDtoConverter.toUserDto(currentUser);
+    }
+
+    @Override
+    public UserDto changePassword(PasswordDto passwordDto, BindingResult bindingResult) {
+        User user = getCurrentUser();
+
+        if(!user.getId().equals(passwordDto.getId())){
+            throw new RuntimeException();
+        }
+
+        if(!user.getPassword().equals(passwordDto.getOldPassword())){
+            throw new RuntimeException();
+        }
+
+        user.setPassword(passwordEncoder.encode(passwordDto.getNewPassword()));
+        userRepository.save(user);
+        UserDto userDto = userDtoConverter.toUserDto(user);
+
+        return userDto;
     }
 
     private void changeNickname(User currentUser, String nickname){

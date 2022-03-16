@@ -1,6 +1,7 @@
 package com.lambakean.domain.service;
 
 import com.lambakean.data.model.User;
+import com.lambakean.representation.dto.PasswordDto;
 import com.lambakean.representation.dto.UserDto;
 import com.lambakean.representation.dto.UserSecurityTokensDto;
 import org.springframework.validation.BindingResult;
@@ -18,4 +19,6 @@ public interface UserService {
     User getCurrentUser();
 
     UserDto change(UserDto userDto, BindingResult bindingResult);
+
+    UserDto changePassword(PasswordDto passwordDto, BindingResult bindingResult);
 }
