@@ -61,4 +61,13 @@ public class UserController {
         return ResponseEntity.ok(userService.changePassword(passwordDto, bindingResult));
     }
 
+    @GetMapping("{/id}")
+    public ResponseEntity<UserDto> getUser(@PathVariable Long id){
+        return ResponseEntity.ok(userService.getUser(id));
+    }
+
+    @GetMapping("{/nickname}")
+    public ResponseEntity<UserDto> getUser(@PathVariable String nickname){
+        return ResponseEntity.ok(userService.getUser(nickname));
+    }
 }

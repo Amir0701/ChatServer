@@ -7,7 +7,6 @@ import java.util.Set;
 @Entity
 @Table(name = "chats")
 public class Chat {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

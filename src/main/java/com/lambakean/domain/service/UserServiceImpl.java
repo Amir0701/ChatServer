@@ -177,6 +177,23 @@ public class UserServiceImpl implements UserService {
         return userDto;
     }
 
+    @Override
+    public UserDto getUser(Long id) {
+        User user = userRepository.getById(id);
+        return userDtoConverter.toUserDto(user);
+    }
+
+    @Override
+    public UserDto getUser(String nickname) {
+        boolean existsNickname = userRepository.existsByNickname(nickname);
+        if(existsNickname){
+            User user = userRepository.findByNickname(nickname);
+            UserDto userDto = userDtoConverter.toUserDto(user);
+            return userDto;
+        }
+        throw new RuntimeException();
+    }
+
     private void changeNickname(User currentUser, String nickname){
         boolean existNickname = userRepository.existsByNickname(nickname);
 

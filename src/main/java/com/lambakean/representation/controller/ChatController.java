@@ -32,5 +32,4 @@ public class ChatController {
 
         return new ResponseEntity<>(createdChat, HttpStatus.CREATED);
     }
-
 }

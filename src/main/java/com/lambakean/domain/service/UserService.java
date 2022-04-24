@@ -21,4 +21,8 @@ public interface UserService {
     UserDto change(UserDto userDto, BindingResult bindingResult);
 
     UserDto changePassword(PasswordDto passwordDto, BindingResult bindingResult);
+
+    UserDto getUser(Long id);
+
+    UserDto getUser(String nickname);
 }
