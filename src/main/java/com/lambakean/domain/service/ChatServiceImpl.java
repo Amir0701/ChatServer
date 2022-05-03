@@ -69,6 +69,36 @@ public class ChatServiceImpl implements ChatService {
         return chatDtoConverter.toChatDto(chat);
     }
 
+    @Override
+    public ChatDto delete(Long id) {
+        User user = userService.getCurrentUser();
+        Chat chat = chatRepository.getById(id);
+        chatRepository.deleteById(id);
+        ChatDto chatDto = chatDtoConverter.toChatDto(chat);
+        return chatDto;
+    }
+
+    @Override
+    public ChatDto get(Long id) {
+        Chat currentChat = chatRepository.getById(id);
+        ChatDto chatDto = chatDtoConverter.toChatDto(currentChat);
+        return chatDto;
+    }
+
+//    @Override
+//    public ChatDto update(ChatDto chatDto, BindingResult bindingResult) {
+//        if(bindingResult.hasErrors()) {
+//            throw new InvalidEntityException(
+//                    bindingResult.getFieldErrors().stream()
+//                            .map(FieldError::getDefaultMessage)
+//                            .collect(Collectors.toSet())
+//            );
+//        }
+//
+//        chatRepository.save(chatDto);
+//        return chatDto;
+//    }
+
     @Async
     public void saveAndFlush(Chat chat) {
         chatRepository.saveAndFlush(chat);

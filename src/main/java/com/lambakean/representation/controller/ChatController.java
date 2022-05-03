@@ -6,10 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.concurrent.ExecutionException;
@@ -32,4 +29,18 @@ public class ChatController {
 
         return new ResponseEntity<>(createdChat, HttpStatus.CREATED);
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<ChatDto> delete(@PathVariable Long id){
+        return ResponseEntity.ok(chatService.delete(id));
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<ChatDto> getChat(@PathVariable Long id){
+        return ResponseEntity.ok(chatService.get(id));
+    }
+
+//    public ResponseEntity<ChatDto> update(@RequestBody @Valid ChatDto chatDto, BindingResult bindingResult){
+//        return ResponseEntity.ok(chatService.update(chatDto, bindingResult));
+//    }
 }

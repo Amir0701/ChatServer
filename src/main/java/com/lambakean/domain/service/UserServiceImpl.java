@@ -152,7 +152,6 @@ public class UserServiceImpl implements UserService {
             changeNickname(currentUser, user.getNickname());
         }
 
-
         userRepository.save(currentUser);
 
         return userDtoConverter.toUserDto(currentUser);
