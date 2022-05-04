@@ -31,21 +31,13 @@ public class MessageServiceImpl implements MessageService{
 
 
     @Override
-    public MessageDto create(MessageDto messageDto, BindingResult bindingResult) {
+    public MessageDto create(MessageDto messageDto) {
         User user = userService.getCurrentUser();
 
         if(user == null) {
             throw new UserNotLoggedInException("You have to log in to create chats");
         }
 
-        if(bindingResult.hasErrors()) {
-            throw new InvalidEntityException(
-                    bindingResult.getFieldErrors()
-                            .stream()
-                            .map(FieldError::getDefaultMessage)
-                            .collect(Collectors.toSet())
-            );
-        }
 
         Message newMessage = messageDtoConverter.toMessage(messageDto);
         messageRepository.saveAndFlush(newMessage);
@@ -56,6 +48,13 @@ public class MessageServiceImpl implements MessageService{
     public MessageDto delete(Long id) {
         Message message = messageRepository.getById(id);
         messageRepository.deleteById(id);
+        MessageDto messageDto = messageDtoConverter.toMessageDto(message);
+        return messageDto;
+    }
+
+    @Override
+    public MessageDto getById(Long id) {
+        Message message = messageRepository.getById(id);
         MessageDto messageDto = messageDtoConverter.toMessageDto(message);
         return messageDto;
     }

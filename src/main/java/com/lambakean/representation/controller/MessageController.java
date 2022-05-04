@@ -18,13 +18,18 @@ public class MessageController {
     }
 
     @PostMapping
-    public ResponseEntity<MessageDto> create(@RequestBody MessageDto messageDto, BindingResult bindingResult){
-        return ResponseEntity.ok(messageService.create(messageDto, bindingResult));
+    public ResponseEntity<MessageDto> create(@RequestBody MessageDto messageDto){
+        return ResponseEntity.ok(messageService.create(messageDto));
     }
 
     @DeleteMapping("{id}")
     public ResponseEntity<MessageDto> delete(@PathVariable Long id){
         return ResponseEntity.ok(messageService.delete(id));
+    }
+
+    @GetMapping("{id}")
+    public ResponseEntity<MessageDto> get(@PathVariable Long id){
+        return ResponseEntity.ok(messageService.getById(id));
     }
 
 }

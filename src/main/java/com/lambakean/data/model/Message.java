@@ -45,7 +45,13 @@ public class Message {
         return null;
     }
 
+    public Message(){
 
+    }
+
+    public Message(Long id){
+        this.id = id;
+    }
     public Long getId() {
         return id;
     }
