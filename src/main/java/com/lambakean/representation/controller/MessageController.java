@@ -22,12 +22,12 @@ public class MessageController {
         return ResponseEntity.ok(messageService.create(messageDto));
     }
 
-    @DeleteMapping("{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<MessageDto> delete(@PathVariable Long id){
         return ResponseEntity.ok(messageService.delete(id));
     }
 
-    @GetMapping("{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<MessageDto> get(@PathVariable Long id){
         return ResponseEntity.ok(messageService.getById(id));
     }
