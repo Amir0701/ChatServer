@@ -6,4 +6,5 @@ public interface ImageService {
     ImageDto create(ImageDto imageDto);
     ImageDto getById(Long id);
     ImageDto delete(Long id);
+    ImageDto[] getImagesByMessageId(Long messageId);
 }

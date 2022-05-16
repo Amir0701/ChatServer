@@ -50,24 +50,29 @@ public class UserController {
     }
 
 
-    @PutMapping
-    public ResponseEntity<UserDto> change(@RequestBody @Valid UserDto user, BindingResult bindingResult){
+    @PutMapping("/{id}")
+    public ResponseEntity<UserDto> change(@PathVariable Long id, @RequestBody @Valid UserDto user, BindingResult bindingResult){
         return ResponseEntity.ok(userService.change(user, bindingResult));
     }
 
-    @PutMapping
-    public ResponseEntity<UserDto> updatePassword(@RequestBody @Valid PasswordDto passwordDto,
+    @PutMapping(value = "/{id}", params = "change")
+    public ResponseEntity<UserDto> updatePassword(@PathVariable Long id, @RequestParam boolean change ,@RequestBody @Valid PasswordDto passwordDto,
                                                   BindingResult bindingResult){
         return ResponseEntity.ok(userService.changePassword(passwordDto, bindingResult));
     }
 
-    @GetMapping("{/id}")
+    @GetMapping("/{id}")
     public ResponseEntity<UserDto> getUser(@PathVariable Long id){
         return ResponseEntity.ok(userService.getUser(id));
     }
 
-    @GetMapping("{/nickname}")
-    public ResponseEntity<UserDto> getUser(@PathVariable String nickname){
+    @GetMapping(params = "nickname")
+    public ResponseEntity<UserDto> getUser(@RequestParam String nickname){
         return ResponseEntity.ok(userService.getUser(nickname));
+    }
+
+    @GetMapping(params = "chatId")
+    public ResponseEntity<UserDto[]> getUsersByChatId(@RequestParam Long chatId){
+        return ResponseEntity.ok(userService.getUsersByChatId(chatId));
     }
 }

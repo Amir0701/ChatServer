@@ -161,13 +161,20 @@ public class UserServiceImpl implements UserService {
     public UserDto changePassword(PasswordDto passwordDto, BindingResult bindingResult) {
         User user = getCurrentUser();
 
-        if(!user.getId().equals(passwordDto.getId())){
-            throw new RuntimeException();
+        if(bindingResult.hasErrors()) {
+            throw new InvalidEntityException(
+                    bindingResult.getFieldErrors().stream()
+                            .map(FieldError::getDefaultMessage)
+                            .collect(Collectors.toSet())
+            );
         }
+//        if(!user.getId().equals(passwordDto.getId())){
+//            throw new RuntimeException();
+//        }
 
-        if(!user.getPassword().equals(passwordDto.getOldPassword())){
-            throw new RuntimeException();
-        }
+//        if(!user.getPassword().equals(passwordDto.getOldPassword())){
+//            throw new RuntimeException();
+//        }
 
         user.setPassword(passwordEncoder.encode(passwordDto.getNewPassword()));
         userRepository.save(user);
@@ -191,6 +198,17 @@ public class UserServiceImpl implements UserService {
             return userDto;
         }
         throw new RuntimeException();
+    }
+
+    @Override
+    public UserDto[] getUsersByChatId(Long id) {
+        User[] users = userRepository.getUsersByChatId(id);
+        UserDto[] userDtos = new UserDto[users.length];
+        for (int i = 0; i < users.length; i++){
+            UserDto currentUserDto = userDtoConverter.toUserDto(users[i]);
+            userDtos[i] = currentUserDto;
+        }
+        return userDtos;
     }
 
     private void changeNickname(User currentUser, String nickname){

@@ -7,4 +7,5 @@ public interface MessageService {
     MessageDto create(MessageDto messageDto);
     MessageDto delete(Long id);
     MessageDto getById(Long id);
+    MessageDto[] getMessagesByChatId(Long chadId);
 }

@@ -38,4 +38,14 @@ public class ImageServiceImpl implements ImageService{
         ImageDto imageDto = imageDtoConverter.toImageDto(image);
         return imageDto;
     }
+
+    @Override
+    public ImageDto[] getImagesByMessageId(Long messageId) {
+        Image[] images = imageRepository.getImagesByMessageId(messageId);
+        ImageDto[] imageDtos = new ImageDto[images.length];
+        for (int i = 0; i < images.length; i++){
+            imageDtos[i] = imageDtoConverter.toImageDto(images[i]);
+        }
+        return imageDtos;
+    }
 }

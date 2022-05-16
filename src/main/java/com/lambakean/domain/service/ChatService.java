@@ -10,4 +10,6 @@ public interface ChatService {
     ChatDto delete(Long id);
     ChatDto get(Long id);
     //ChatDto update(ChatDto chatDto, BindingResult bindingResult);
+
+    ChatDto[] getChatsByUserId(Long userId);
 }

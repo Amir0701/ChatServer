@@ -32,4 +32,8 @@ public class MessageController {
         return ResponseEntity.ok(messageService.getById(id));
     }
 
+    @GetMapping(params = "chatId")
+    public ResponseEntity<MessageDto[]> getMessagesByChatId(@RequestParam Long chatId){
+        return ResponseEntity.ok(messageService.getMessagesByChatId(chatId));
+    }
 }

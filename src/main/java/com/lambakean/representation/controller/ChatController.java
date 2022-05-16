@@ -9,7 +9,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.concurrent.ExecutionException;
 
 @RestController
 @RequestMapping("/api/v1/chat")
@@ -43,4 +42,10 @@ public class ChatController {
 //    public ResponseEntity<ChatDto> update(@RequestBody @Valid ChatDto chatDto, BindingResult bindingResult){
 //        return ResponseEntity.ok(chatService.update(chatDto, bindingResult));
 //    }
+
+    @GetMapping(params = "userId")
+    public ResponseEntity<ChatDto[]> getChatsByUserId(@RequestParam Long userId){
+        return ResponseEntity.ok(chatService.getChatsByUserId(userId));
+    }
+
 }

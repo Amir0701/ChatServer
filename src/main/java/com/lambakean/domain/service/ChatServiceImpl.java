@@ -85,6 +85,18 @@ public class ChatServiceImpl implements ChatService {
         return chatDto;
     }
 
+    @Override
+    public ChatDto[] getChatsByUserId(Long userId) {
+        Chat[] chats = chatRepository.getChatsByUserId(userId);
+        ChatDto[] chatDtos = new ChatDto[chats.length];
+
+        for (int i = 0; i < chats.length; i++){
+            ChatDto chatDto = chatDtoConverter.toChatDto(chats[i]);
+            chatDtos[i] = chatDto;
+        }
+        return chatDtos;
+    }
+
 //    @Override
 //    public ChatDto update(ChatDto chatDto, BindingResult bindingResult) {
 //        if(bindingResult.hasErrors()) {
