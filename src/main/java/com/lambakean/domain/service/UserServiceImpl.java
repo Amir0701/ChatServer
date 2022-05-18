@@ -118,6 +118,8 @@ public class UserServiceImpl implements UserService {
         if(currentUser == null)
             throw new UserNotLoggedInException("You must be logged in to delete your account");
 
+        // FIXME
+        // why? if user wants to delete own account?
         if(currentUser.getId().equals(id)){
             throw new RuntimeException();
         }
@@ -144,11 +146,11 @@ public class UserServiceImpl implements UserService {
 
         User user = userDtoConverter.toUser(userDto);
         User currentUser = getCurrentUser();
-        if(user.getName() != null){
+        if(user.getName() != null && !user.getName().equals(currentUser.getName())) {
             currentUser.setName(user.getName());
         }
 
-        if(user.getNickname() != null){
+        if(user.getNickname() != null && !user.getNickname().equals(currentUser.getNickname())) {
             changeNickname(currentUser, user.getNickname());
         }
 
