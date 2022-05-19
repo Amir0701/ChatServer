@@ -5,10 +5,13 @@ import com.lambakean.data.model.Role;
 import com.lambakean.data.model.Subscription;
 import com.lambakean.data.model.User;
 import com.lambakean.data.repository.ChatRepository;
+import com.lambakean.data.repository.SubscriptionRepository;
 import com.lambakean.domain.exception.InvalidEntityException;
 import com.lambakean.domain.exception.UserNotLoggedInException;
 import com.lambakean.representation.dto.ChatDto;
+import com.lambakean.representation.dto.UserDto;
 import com.lambakean.representation.dtoConverter.ChatDtoConverter;
+import com.lambakean.representation.dtoConverter.UserDtoConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
@@ -26,12 +29,20 @@ public class ChatServiceImpl implements ChatService {
     private final ChatDtoConverter chatDtoConverter;
     private final ChatRepository chatRepository;
     private final UserService userService;
+    private final UserDtoConverter userDtoConverter;
+    private final SubscriptionRepository subscriptionRepository;
 
     @Autowired
-    public ChatServiceImpl(ChatDtoConverter chatDtoConverter, ChatRepository chatRepository, UserService userService) {
+    public ChatServiceImpl(ChatDtoConverter chatDtoConverter,
+                           ChatRepository chatRepository,
+                           UserService userService,
+                           UserDtoConverter userDtoConverter,
+                           SubscriptionRepository subscriptionRepository) {
         this.chatDtoConverter = chatDtoConverter;
         this.chatRepository = chatRepository;
         this.userService = userService;
+        this.userDtoConverter = userDtoConverter;
+        this.subscriptionRepository = subscriptionRepository;
     }
 
     @Override
@@ -97,19 +108,23 @@ public class ChatServiceImpl implements ChatService {
         return chatDtos;
     }
 
-//    @Override
-//    public ChatDto update(ChatDto chatDto, BindingResult bindingResult) {
-//        if(bindingResult.hasErrors()) {
-//            throw new InvalidEntityException(
-//                    bindingResult.getFieldErrors().stream()
-//                            .map(FieldError::getDefaultMessage)
-//                            .collect(Collectors.toSet())
-//            );
-//        }
-//
-//        chatRepository.save(chatDto);
-//        return chatDto;
-//    }
+    @Override
+    public ChatDto put(Long id, UserDto[] userDtos) {
+        Chat currentChat = chatRepository.getById(id);
+
+        for (UserDto userDto: userDtos){
+            User user = userDtoConverter.toUser(userDto);
+            Subscription subscription = new Subscription();
+            subscription.setChat(currentChat);
+            subscription.setUser(user);
+            subscription.setUserRole(Role.MEMBER);
+            subscriptionRepository.saveAndFlush(subscription);
+        }
+        ChatDto chatDto = chatDtoConverter.toChatDto(currentChat);
+        return chatDto;
+    }
+
+
 
     @Async
     public void saveAndFlush(Chat chat) {
