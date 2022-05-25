@@ -2,6 +2,7 @@ package com.lambakean.domain.service;
 
 import com.lambakean.data.model.Chat;
 import com.lambakean.representation.dto.ChatDto;
+import com.lambakean.representation.dto.UserDto;
 import org.springframework.validation.BindingResult;
 
 public interface ChatService {
@@ -12,4 +13,6 @@ public interface ChatService {
     //ChatDto update(ChatDto chatDto, BindingResult bindingResult);
 
     ChatDto[] getChatsByUserId(Long userId);
+
+    ChatDto put(Long id, UserDto[] userDtos);
 }

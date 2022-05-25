@@ -2,6 +2,7 @@ package com.lambakean.representation.controller;
 
 import com.lambakean.domain.service.ChatService;
 import com.lambakean.representation.dto.ChatDto;
+import com.lambakean.representation.dto.UserDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,6 +30,12 @@ public class ChatController {
         return new ResponseEntity<>(createdChat, HttpStatus.CREATED);
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<ChatDto> addUsersToChat(@PathVariable Long id, @RequestBody UserDto[] userDtos){
+        ChatDto chatDto = chatService.put(id, userDtos);
+        return ResponseEntity.ok(chatDto);
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<ChatDto> delete(@PathVariable Long id){
         return ResponseEntity.ok(chatService.delete(id));
@@ -39,9 +46,6 @@ public class ChatController {
         return ResponseEntity.ok(chatService.get(id));
     }
 
-//    public ResponseEntity<ChatDto> update(@RequestBody @Valid ChatDto chatDto, BindingResult bindingResult){
-//        return ResponseEntity.ok(chatService.update(chatDto, bindingResult));
-//    }
 
     @GetMapping(params = "userId")
     public ResponseEntity<ChatDto[]> getChatsByUserId(@RequestParam Long userId){
