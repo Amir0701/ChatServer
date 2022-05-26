@@ -56,6 +56,7 @@ public class ChatDtoConverterImpl implements ChatDtoConverter {
             chat.setSubscriptions(new HashSet<>());
         }
 
+        chat.setAvatar(chatDto.getAvatar());
         return chat;
     }
 
@@ -80,6 +81,7 @@ public class ChatDtoConverterImpl implements ChatDtoConverter {
                         .collect(Collectors.toSet())
         );
 
+        chatDto.setAvatar(chat.getAvatar());
         return chatDto;
     }
 }

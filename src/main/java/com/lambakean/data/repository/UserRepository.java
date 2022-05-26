@@ -17,17 +17,9 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     boolean existsByEmail(String email);
 
-    @Query(nativeQuery = true, value = "SELECT u.id, u.name, u.nickname from users u INNER JOIN subscriptions s ON u.id = s.user_id WHERE :chatId = s.chat_id")
+    @Query(nativeQuery = true, value = "SELECT u.id, u.name, u.nickname, u.avatar from users u INNER JOIN subscriptions s ON u.id = s.user_id WHERE :chatId = s.chat_id")
     User[] getUsersByChatId(Long chatId);
 
-    @Query(nativeQuery = true, value = "SELECT u.id, u.name, u.nickname FROM users u WHERE u.nickname LIKE :nickname ")
-    User[] findUsersByNicknameWhenStart(String nickname);
-
-    @Query(nativeQuery = true, value = "SELECT u.id, u.name, u.nickname FROM users u WHERE u.nickname LIKE '_%:nickname%' ")
-    User[] findUsersByNicknameWhenNotStart(String nickname);
-
     User[] findUsersByNicknameContains(String nickname);
-
-
 
 }

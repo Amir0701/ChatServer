@@ -15,6 +15,8 @@ public class ChatDto {
     @DateTimeFormat(pattern = "dd-MM-yyyy HH:mm:ss")
     private LocalDateTime whenCreated;
 
+    private String avatar;
+
     private Set<SubscriptionDto> subscriptions;
     private Set<MessageDto> messages;
 
@@ -57,5 +59,13 @@ public class ChatDto {
 
     public void setMessages(Set<MessageDto> messages) {
         this.messages = messages;
+    }
+
+    public String getAvatar() {
+        return avatar;
+    }
+
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
     }
 }

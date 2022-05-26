@@ -18,7 +18,7 @@ public class UserDtoConverterImpl implements UserDtoConverter {
         user.setNickname(userDto.getNickname());
         user.setPassword(userDto.getPassword());
         user.setEmail(userDto.getEmail());
-
+        user.setAvatar(userDto.getAvatar());
         // todo add empty collections assignments
 
         return user;
@@ -34,7 +34,7 @@ public class UserDtoConverterImpl implements UserDtoConverter {
         userDto.setNickname(user.getNickname());
         userDto.setPassword(user.getPassword());
         userDto.setEmail(user.getEmail());
-
+        userDto.setAvatar(user.getAvatar());
         return userDto;
     }
 }

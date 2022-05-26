@@ -124,6 +124,16 @@ public class ChatServiceImpl implements ChatService {
         return chatDto;
     }
 
+    @Override
+    public ChatDto[] getAllChats() {
+        Chat[] chats = chatRepository.getAllChats();
+        ChatDto[] chatDtos = new ChatDto[chats.length];
+
+        for (int i = 0; i < chats.length; i++){
+            chatDtos[i] = chatDtoConverter.toChatDto(chats[i]);
+        }
+        return chatDtos;
+    }
 
 
     @Async

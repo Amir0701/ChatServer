@@ -1,5 +1,6 @@
 package com.lambakean.representation.controller;
 
+import com.lambakean.data.model.Chat;
 import com.lambakean.domain.service.ChatService;
 import com.lambakean.representation.dto.ChatDto;
 import com.lambakean.representation.dto.UserDto;
@@ -52,4 +53,8 @@ public class ChatController {
         return ResponseEntity.ok(chatService.getChatsByUserId(userId));
     }
 
+    @GetMapping
+    public ResponseEntity<ChatDto[]> getAllChats(){
+        return ResponseEntity.ok(chatService.getAllChats());
+    }
 }
