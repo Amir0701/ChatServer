@@ -74,7 +74,6 @@ public class MessageServiceImpl implements MessageService{
         for (int i = 0; i < messages.length; i++){
             MessageDto messageDto = messageDtoConverter.toMessageDto(messages[i]);
             ImageDto[] imageDtos = imageService.getImagesByMessageId(messageDto.getId());
-            Set<ImageDto> imageDtoSet = new HashSet<>();
 
             messageDto.setImageDtoSet(imageDtos);
             messageDtos[i] = messageDto;

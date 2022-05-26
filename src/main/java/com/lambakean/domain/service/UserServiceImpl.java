@@ -98,9 +98,9 @@ public class UserServiceImpl implements UserService {
     @Override
     public CompletableFuture<UserSecurityTokensDto> login(UserDto credentials) {
 
-        String exceptionMsg = "Couldn't find the user with provided nickname and password";
+        String exceptionMsg = "Couldn't find the user with provided email and password";
 
-        User user = Optional.ofNullable(userRepository.findByNickname(credentials.getNickname()))
+        User user = Optional.ofNullable(userRepository.findByEmail(credentials.getEmail()))
             .orElseThrow(
                 () -> new BadCredentialsException(exceptionMsg)
             );
@@ -207,6 +207,30 @@ public class UserServiceImpl implements UserService {
         for (int i = 0; i < users.length; i++){
             UserDto currentUserDto = userDtoConverter.toUserDto(users[i]);
             userDtos[i] = currentUserDto;
+        }
+        return userDtos;
+    }
+
+    @Override
+    public UserDto[] findUsersByNickname(String nickname) {
+        User[] usersStartWithNickname = userRepository.findUsersByNicknameContains(nickname);
+        User[] usersNotStartWithNickname = userRepository.findUsersByNicknameWhenNotStart(nickname);
+        int length = usersStartWithNickname.length + usersNotStartWithNickname.length;
+        UserDto userDtos[] = new UserDto[length];
+
+        int i = 0;
+        for (int j = 0; j < usersStartWithNickname.length; j++){
+            User user = usersStartWithNickname[j];
+            UserDto userDto = userDtoConverter.toUserDto(user);
+            userDtos[i] = userDto;
+            i++;
+        }
+
+        for (int j = 0; j < usersNotStartWithNickname.length; j++){
+            User user = usersNotStartWithNickname[j];
+            UserDto userDto = userDtoConverter.toUserDto(user);
+            userDtos[i] = userDto;
+            i++;
         }
         return userDtos;
     }
