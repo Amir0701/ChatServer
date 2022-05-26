@@ -13,7 +13,6 @@ public class MessageDto {  // todo add validation constraints
     @DateTimeFormat(pattern = "dd-MM-yyyy HH:mm:ss")
     private LocalDateTime whenCreated;
 
-    // todo add ImageDto here
     private ImageDto[] imageDtoSet;
 
     public Long getId() {

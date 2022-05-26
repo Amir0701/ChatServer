@@ -27,4 +27,6 @@ public interface UserService {
     UserDto getUser(String nickname);
 
     UserDto[] getUsersByChatId(Long id);
+
+    UserDto[] findUsersByNickname(String nickname);
 }

@@ -4,6 +4,8 @@ import com.lambakean.domain.service.MessageService;
 import com.lambakean.representation.dto.MessageDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
@@ -35,5 +37,11 @@ public class MessageController {
     @GetMapping(params = "chatId")
     public ResponseEntity<MessageDto[]> getMessagesByChatId(@RequestParam Long chatId){
         return ResponseEntity.ok(messageService.getMessagesByChatId(chatId));
+    }
+
+    @MessageMapping("/send")
+    @SendTo("/topic/send")
+    public ResponseEntity<MessageDto> message(MessageDto message) {
+        return ResponseEntity.ok(messageService.create(message));
     }
 }

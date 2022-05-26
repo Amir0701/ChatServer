@@ -75,4 +75,9 @@ public class UserController {
     public ResponseEntity<UserDto[]> getUsersByChatId(@RequestParam Long chatId){
         return ResponseEntity.ok(userService.getUsersByChatId(chatId));
     }
+
+    @GetMapping(params = "searchNick")
+    public ResponseEntity<UserDto[]> getUsersByNickname(@RequestParam("searchNick") String nickname){
+        return ResponseEntity.ok(userService.findUsersByNickname(nickname));
+    }
 }
