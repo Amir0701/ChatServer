@@ -17,6 +17,9 @@ public class Chat {
     @Column(nullable = false)
     private LocalDateTime whenCreated;
 
+    @Column
+    private String avatar;
+
     @OneToMany(mappedBy = "chat", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Set<Subscription> subscriptions;
 
@@ -68,5 +71,13 @@ public class Chat {
 
     public void setMessages(Set<Message> messages) {
         this.messages = messages;
+    }
+
+    public String getAvatar() {
+        return avatar;
+    }
+
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
     }
 }

@@ -54,4 +54,5 @@ public class MessageDto {  // todo add validation constraints
     public void setImageDtoSet(ImageDto[] imageDtoSet) {
         this.imageDtoSet = imageDtoSet;
     }
+
 }

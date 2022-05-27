@@ -27,6 +27,8 @@ public class User {
     @NotNull  // todo msg
     @Column(nullable = false)
     private String password;
+    @Column
+    private String avatar;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
     private Set<Subscription> subscriptions;
@@ -96,4 +98,13 @@ public class User {
     public void setRefreshTokenWrappers(Set<RefreshTokenWrapper> refreshTokenWrappers) {
         this.refreshTokenWrappers = refreshTokenWrappers;
     }
+
+    public String getAvatar() {
+        return avatar;
+    }
+
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
+    }
+
 }

@@ -8,6 +8,7 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/api/v1/message")
@@ -41,7 +42,9 @@ public class MessageController {
 
     @MessageMapping("/send")
     @SendTo("/topic/send")
-    public ResponseEntity<MessageDto> message(MessageDto message) {
-        return ResponseEntity.ok(messageService.create(message));
+    public ResponseEntity<MessageDto> message(@RequestParam MultipartFile[] multipartFile,
+                                              @RequestParam Long chatId,
+                                              @RequestParam Long userId) {
+        return ResponseEntity.ok(messageService.add(multipartFile, chatId, userId));
     }
 }

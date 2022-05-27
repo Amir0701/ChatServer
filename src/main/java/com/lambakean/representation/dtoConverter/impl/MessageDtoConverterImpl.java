@@ -20,7 +20,6 @@ public class MessageDtoConverterImpl implements MessageDtoConverter {
         message.setChat(new Chat(messageDto.getChatId()));
         message.setUser(new User(messageDto.getUserId()));
         message.setWhenCreated(messageDto.getWhenCreated());
-
         return message;
     }
 

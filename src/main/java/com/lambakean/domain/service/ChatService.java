@@ -15,4 +15,6 @@ public interface ChatService {
     ChatDto[] getChatsByUserId(Long userId);
 
     ChatDto put(Long id, UserDto[] userDtos);
+
+    ChatDto[] getAllChats();
 }

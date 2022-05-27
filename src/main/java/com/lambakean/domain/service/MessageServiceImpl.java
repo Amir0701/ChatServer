@@ -1,22 +1,33 @@
 package com.lambakean.domain.service;
 
+import com.lambakean.data.model.Chat;
 import com.lambakean.data.model.Image;
 import com.lambakean.data.model.Message;
 import com.lambakean.data.model.User;
+import com.lambakean.data.repository.ImageRepository;
 import com.lambakean.data.repository.MessageRepository;
-import com.lambakean.domain.exception.InvalidEntityException;
 import com.lambakean.domain.exception.UserNotLoggedInException;
+import com.lambakean.representation.dto.ChatDto;
 import com.lambakean.representation.dto.ImageDto;
 import com.lambakean.representation.dto.MessageDto;
+import com.lambakean.representation.dto.UserDto;
+import com.lambakean.representation.dtoConverter.ChatDtoConverter;
+import com.lambakean.representation.dtoConverter.ImageDtoConverter;
 import com.lambakean.representation.dtoConverter.MessageDtoConverter;
+import com.lambakean.representation.dtoConverter.UserDtoConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.util.HashSet;
-import java.util.Set;
-import java.util.stream.Collectors;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 @Component
 public class MessageServiceImpl implements MessageService{
@@ -24,15 +35,32 @@ public class MessageServiceImpl implements MessageService{
     private MessageRepository messageRepository;
     private UserService userService;
     private ImageService imageService;
+    private UserDtoConverter userDtoConverter;
+    private ChatService chatService;
+    private ChatDtoConverter chatDtoConverter;
+    private ImageRepository imageRepository;
+    private ImageDtoConverter imageDtoConverter;
+
+    private static String path = "E:\\ChatPhoto\\";
     @Autowired
     public MessageServiceImpl(MessageDtoConverter messageDtoConverter,
                               MessageRepository messageRepository,
                               UserService userService,
-                              ImageService imageService){
+                              ImageService imageService,
+                              UserDtoConverter userDtoConverter,
+                              ChatService chatService,
+                              ChatDtoConverter chatDtoConverter,
+                              ImageRepository imageRepository,
+                              ImageDtoConverter imageDtoConverter){
         this.messageDtoConverter = messageDtoConverter;
         this.messageRepository = messageRepository;
         this.userService = userService;
         this.imageService = imageService;
+        this.userDtoConverter = userDtoConverter;
+        this.chatDtoConverter = chatDtoConverter;
+        this.chatService = chatService;
+        this.imageRepository = imageRepository;
+        this.imageDtoConverter = imageDtoConverter;
     }
 
 
@@ -79,5 +107,50 @@ public class MessageServiceImpl implements MessageService{
             messageDtos[i] = messageDto;
         }
         return messageDtos;
+    }
+
+    @Override
+    public MessageDto add(MultipartFile[] multipartFile, Long chatId, Long userId) {
+        Path root = Paths.get(path + userId + "\\");
+        List<Image> images = new ArrayList<>();
+
+        for (int i = 0; i < multipartFile.length; i++){
+            try {
+                Files.copy(multipartFile[i].getInputStream(), root.resolve(multipartFile[i].getOriginalFilename()));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            Image newImage = new Image();
+            newImage.setUrl(path + userId + "\\" + multipartFile[i].getOriginalFilename());
+            images.add(newImage);
+
+        }
+
+        UserDto userDto = userService.getUser(userId);
+        User user = userDtoConverter.toUser(userDto);
+        ChatDto chatDto = chatService.get(chatId);
+        Chat chat = chatDtoConverter.toChat(chatDto);
+
+        Message newMessage = new Message();
+        newMessage.setUser(user);
+        newMessage.setWhenCreated(LocalDateTime.now());
+        newMessage.setChat(chat);
+
+        for(Image image: images){
+            image.setMessage(newMessage);
+            imageRepository.save(image);
+        }
+
+        messageRepository.save(newMessage);
+        MessageDto messageDto = messageDtoConverter.toMessageDto(newMessage);
+
+        Image[] imageArr = (Image[]) images.toArray();
+        ImageDto[] imageDtos = new ImageDto[imageArr.length];
+        for (int i = 0; i < imageDtos.length; i++){
+            imageDtos[i] = imageDtoConverter.toImageDto(imageArr[i]);
+        }
+        messageDto.setImageDtoSet(imageDtos);
+        return messageDto;
     }
 }

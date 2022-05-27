@@ -24,6 +24,10 @@ import org.springframework.validation.FieldError;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
@@ -45,6 +49,8 @@ public class UserServiceImpl implements UserService {
     private final RefreshTokenWrapperService refreshTokenWrapperService;
 
     private final PasswordEncoder passwordEncoder;
+
+    private static String path = "E:\\ChatPhoto\\";
 
     @Autowired
     public UserServiceImpl(UserDtoConverter userDtoConverter,
@@ -81,14 +87,24 @@ public class UserServiceImpl implements UserService {
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
 
+        User regUser = null;
         try {
-            userRepository.saveAndFlush(user);
+            regUser = userRepository.saveAndFlush(user);
         } catch (ConstraintViolationException e) {
             throw new InvalidEntityException(
                     e.getConstraintViolations().stream()
                             .map(ConstraintViolation::getMessage)
                             .collect(Collectors.toSet())
             );
+        }
+
+        if(regUser != null){
+            Long id = regUser.getId();
+            try {
+                Files.createDirectory(Paths.get(path + id));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
 
         return CompletableFuture.completedFuture(generateAndSaveSecurityTokens(user));
@@ -216,8 +232,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto[] findUsersByNickname(String nickname) {
         User[] usersStartWithNickname = userRepository.findUsersByNicknameContains(nickname);
-        User[] usersNotStartWithNickname = userRepository.findUsersByNicknameWhenNotStart(nickname);
-        int length = usersStartWithNickname.length + usersNotStartWithNickname.length;
+        int length = usersStartWithNickname.length;
         UserDto userDtos[] = new UserDto[length];
 
         int i = 0;
@@ -228,12 +243,6 @@ public class UserServiceImpl implements UserService {
             i++;
         }
 
-        for (int j = 0; j < usersNotStartWithNickname.length; j++){
-            User user = usersNotStartWithNickname[j];
-            UserDto userDto = userDtoConverter.toUserDto(user);
-            userDtos[i] = userDto;
-            i++;
-        }
         return userDtos;
     }
 
