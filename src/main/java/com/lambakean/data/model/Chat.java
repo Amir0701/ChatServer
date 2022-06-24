@@ -23,7 +23,7 @@ public class Chat {
     @OneToMany(mappedBy = "chat", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Set<Subscription> subscriptions;
 
-    @OneToMany(mappedBy = "chat", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "chat", fetch = FetchType.EAGER)
     private Set<Message> messages;
 
     public Chat(Long id) {
