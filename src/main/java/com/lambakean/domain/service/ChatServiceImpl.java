@@ -82,10 +82,10 @@ public class ChatServiceImpl implements ChatService {
 
     @Override
     public ChatDto delete(Long id) {
-        User user = userService.getCurrentUser();
+        //User user = userService.getCurrentUser();
         Chat chat = chatRepository.getById(id);
-        chatRepository.deleteById(id);
         ChatDto chatDto = chatDtoConverter.toChatDto(chat);
+        chatRepository.deleteById(id);
         return chatDto;
     }
 

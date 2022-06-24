@@ -136,13 +136,13 @@ public class MessageServiceImpl implements MessageService{
         newMessage.setUser(user);
         newMessage.setWhenCreated(LocalDateTime.now());
         newMessage.setChat(chat);
+        messageRepository.save(newMessage);
 
         for(Image image: images){
             image.setMessage(newMessage);
             imageRepository.save(image);
         }
 
-        messageRepository.save(newMessage);
         MessageDto messageDto = messageDtoConverter.toMessageDto(newMessage);
 
         Image[] imageArr = (Image[]) images.toArray();
