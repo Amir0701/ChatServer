@@ -6,14 +6,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/api/v1/message")
 public class MessageController {
-    private MessageService messageService;
+    private final MessageService messageService;
 
     @Autowired
     public MessageController(MessageService messageService){
@@ -42,9 +41,9 @@ public class MessageController {
 
     @MessageMapping("/send")
     @SendTo("/topic/send")
-    public ResponseEntity<MessageDto> message(@RequestParam MultipartFile[] multipartFile,
-                                              @RequestParam Long chatId,
-                                              @RequestParam Long userId) {
+    public ResponseEntity<MessageDto> message(@RequestParam("files[]") MultipartFile[] multipartFile,
+                                              @RequestParam("chatId") Long chatId,
+                                              @RequestParam("userId") Long userId) {
         return ResponseEntity.ok(messageService.add(multipartFile, chatId, userId));
     }
 }

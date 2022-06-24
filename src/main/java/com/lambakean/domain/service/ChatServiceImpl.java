@@ -20,7 +20,6 @@ import org.springframework.validation.FieldError;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
-import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 @Component
@@ -111,8 +110,11 @@ public class ChatServiceImpl implements ChatService {
     @Override
     public ChatDto put(Long id, UserDto[] userDtos) {
         Chat currentChat = chatRepository.getById(id);
+        User currentUser = userService.getCurrentUser();
 
         for (UserDto userDto: userDtos){
+            if (userDto.getId().equals(currentUser.getId())) continue;
+
             User user = userDtoConverter.toUser(userDto);
             Subscription subscription = new Subscription();
             subscription.setChat(currentChat);
