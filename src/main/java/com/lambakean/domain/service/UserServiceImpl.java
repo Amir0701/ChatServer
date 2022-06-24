@@ -26,8 +26,8 @@ import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
@@ -134,6 +134,8 @@ public class UserServiceImpl implements UserService {
         if(currentUser == null)
             throw new UserNotLoggedInException("You must be logged in to delete your account");
 
+        // FIXME
+        // why? if user wants to delete own account?
         if(currentUser.getId().equals(id)){
             throw new RuntimeException();
         }
@@ -160,11 +162,11 @@ public class UserServiceImpl implements UserService {
 
         User user = userDtoConverter.toUser(userDto);
         User currentUser = getCurrentUser();
-        if(user.getName() != null){
+        if(user.getName() != null && !user.getName().equals(currentUser.getName())) {
             currentUser.setName(user.getName());
         }
 
-        if(user.getNickname() != null){
+        if(user.getNickname() != null && !user.getNickname().equals(currentUser.getNickname())) {
             changeNickname(currentUser, user.getNickname());
         }
 
@@ -229,19 +231,12 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto[] findUsersByNickname(String nickname) {
-        User[] usersStartWithNickname = userRepository.findUsersByNicknameContains(nickname);
-        int length = usersStartWithNickname.length;
-        UserDto userDtos[] = new UserDto[length];
+        User currentUser = getCurrentUser();
 
-        int i = 0;
-        for (int j = 0; j < usersStartWithNickname.length; j++){
-            User user = usersStartWithNickname[j];
-            UserDto userDto = userDtoConverter.toUserDto(user);
-            userDtos[i] = userDto;
-            i++;
-        }
-
-        return userDtos;
+        return Arrays.stream(userRepository.findUsersByNicknameContains(nickname))
+                .filter((User user) -> !user.getId().equals(currentUser.getId()))
+                .map(userDtoConverter::toUserDto)
+                .toArray(UserDto[]::new);
     }
 
     private void changeNickname(User currentUser, String nickname){
