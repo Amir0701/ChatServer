@@ -40,11 +40,19 @@ public class MessageController {
         return ResponseEntity.ok(messageService.getMessagesByChatId(chatId));
     }
 
+//    @MessageMapping("/send")
+//    @SendTo("/topic/send")
+
+    @PostMapping(params = {"file", "chatId", "userId"})
+    public ResponseEntity<MessageDto> message(@RequestParam(value = "file") MultipartFile[] multipartFile,
+                                              @RequestParam(value = "chatId") Long chatId,
+                                              @RequestParam(value = "userId") Long userId) {
+        return ResponseEntity.ok(messageService.add(multipartFile, chatId, userId));
+    }
+
     @MessageMapping("/send")
     @SendTo("/topic/send")
-    public ResponseEntity<MessageDto> message(@RequestParam MultipartFile[] multipartFile,
-                                              @RequestParam Long chatId,
-                                              @RequestParam Long userId) {
-        return ResponseEntity.ok(messageService.add(multipartFile, chatId, userId));
+    public ResponseEntity<MessageDto> send(@RequestParam MessageDto messageDto){
+        return ResponseEntity.ok(messageDto);
     }
 }

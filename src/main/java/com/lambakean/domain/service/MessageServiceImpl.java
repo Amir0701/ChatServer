@@ -124,7 +124,6 @@ public class MessageServiceImpl implements MessageService{
             Image newImage = new Image();
             newImage.setUrl(path + userId + "\\" + multipartFile[i].getOriginalFilename());
             images.add(newImage);
-
         }
 
         UserDto userDto = userService.getUser(userId);
