@@ -28,9 +28,10 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
-public class MessageServiceImpl implements MessageService {
+public class MessageServiceImpl implements MessageService{
     private MessageDtoConverter messageDtoConverter;
     private MessageRepository messageRepository;
     private UserService userService;
@@ -42,7 +43,6 @@ public class MessageServiceImpl implements MessageService {
     private ImageDtoConverter imageDtoConverter;
 
     private static String path = "/opt/chatImages/";
-
     @Autowired
     public MessageServiceImpl(MessageDtoConverter messageDtoConverter,
                               MessageRepository messageRepository,
@@ -52,7 +52,7 @@ public class MessageServiceImpl implements MessageService {
                               ChatService chatService,
                               ChatDtoConverter chatDtoConverter,
                               ImageRepository imageRepository,
-                              ImageDtoConverter imageDtoConverter) {
+                              ImageDtoConverter imageDtoConverter){
         this.messageDtoConverter = messageDtoConverter;
         this.messageRepository = messageRepository;
         this.userService = userService;
@@ -69,7 +69,7 @@ public class MessageServiceImpl implements MessageService {
     public MessageDto create(MessageDto messageDto) {
         User user = userService.getCurrentUser();
 
-        if (user == null) {
+        if(user == null) {
             throw new UserNotLoggedInException("You have to log in to create chats");
         }
 
@@ -115,7 +115,7 @@ public class MessageServiceImpl implements MessageService {
         Path root = Paths.get(path + userId + "/");
         List<Image> images = new ArrayList<>();
 
-        for (int i = 0; i < multipartFile.length; i++) {
+        for (int i = 0; i < multipartFile.length; i++){
             try {
                 File file = new File(root.resolve(multipartFile[i].getOriginalFilename()).toUri());
                 if (!file.exists()) file.mkdirs();
@@ -136,11 +136,15 @@ public class MessageServiceImpl implements MessageService {
 
         Message newMessage = new Message();
         newMessage.setUser(user);
+        System.out.println("User ID: " + user.getId());
         newMessage.setWhenCreated(LocalDateTime.now());
         newMessage.setChat(chat);
-        messageRepository.save(newMessage);
+        System.out.println("Chat ID: " + chat.getId() );
 
-        for (Image image : images) {
+
+        newMessage.setImages(images.stream().collect(Collectors.toSet()));
+        messageRepository.save(newMessage);
+        for(Image image: images){
             image.setMessage(newMessage);
             imageRepository.save(image);
         }

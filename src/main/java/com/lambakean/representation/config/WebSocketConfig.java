@@ -25,9 +25,9 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
                 .withSockJS();
     }
 
-    @Override
-    public void configureWebSocketTransport(WebSocketTransportRegistration registry) {
-        registry.setMessageSizeLimit(1024 * 1024 * 1024);       // 1GB
-        registry.setSendBufferSizeLimit(1024 * 1024 * 1024);    // 1GB
-    }
+//    @Override
+//    public void configureWebSocketTransport(WebSocketTransportRegistration registry) {
+//        registry.setMessageSizeLimit(1024 * 1024 * 1024);       // 1GB
+//        registry.setSendBufferSizeLimit(1024 * 1024 * 1024);    // 1GB
+//    }
 }

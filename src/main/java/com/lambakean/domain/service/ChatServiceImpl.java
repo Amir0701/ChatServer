@@ -1,10 +1,8 @@
 package com.lambakean.domain.service;
 
-import com.lambakean.data.model.Chat;
-import com.lambakean.data.model.Role;
-import com.lambakean.data.model.Subscription;
-import com.lambakean.data.model.User;
+import com.lambakean.data.model.*;
 import com.lambakean.data.repository.ChatRepository;
+import com.lambakean.data.repository.ImageRepository;
 import com.lambakean.data.repository.SubscriptionRepository;
 import com.lambakean.domain.exception.InvalidEntityException;
 import com.lambakean.domain.exception.UserNotLoggedInException;
@@ -19,7 +17,9 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Component
@@ -30,18 +30,21 @@ public class ChatServiceImpl implements ChatService {
     private final UserService userService;
     private final UserDtoConverter userDtoConverter;
     private final SubscriptionRepository subscriptionRepository;
+    private final ImageRepository imageRepository;
 
     @Autowired
     public ChatServiceImpl(ChatDtoConverter chatDtoConverter,
                            ChatRepository chatRepository,
                            UserService userService,
                            UserDtoConverter userDtoConverter,
-                           SubscriptionRepository subscriptionRepository) {
+                           SubscriptionRepository subscriptionRepository,
+                           ImageRepository imageRepository) {
         this.chatDtoConverter = chatDtoConverter;
         this.chatRepository = chatRepository;
         this.userService = userService;
         this.userDtoConverter = userDtoConverter;
         this.subscriptionRepository = subscriptionRepository;
+        this.imageRepository = imageRepository;
     }
 
     @Override
@@ -98,6 +101,14 @@ public class ChatServiceImpl implements ChatService {
     @Override
     public ChatDto[] getChatsByUserId(Long userId) {
         Chat[] chats = chatRepository.getChatsByUserId(userId);
+//        for (Chat chat : chats){
+//            Set<Message> set = chat.getMessages();
+//            for (Message message : set){
+//                Image[] images = imageRepository.getImagesByMessageId(message.getId());
+//                message.setImages(Arrays.stream(images).collect(Collectors.toSet()));
+//            }
+//        }
+
         ChatDto[] chatDtos = new ChatDto[chats.length];
 
         for (int i = 0; i < chats.length; i++){
