@@ -10,6 +10,8 @@ import com.lambakean.representation.dtoConverter.MessageDtoConverter;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 
+import java.util.Comparator;
+
 @Component
 public class MessageDtoConverterImpl implements MessageDtoConverter {
 
@@ -37,7 +39,7 @@ public class MessageDtoConverterImpl implements MessageDtoConverter {
         ImageDtoConverter imageDtoConverter = new ImageDtoConverterImpl();
         messageDto.setImageDtoSet(message.getImages()
                 .stream()
-                .map(image -> imageDtoConverter.toImageDto(image))
+                .map(imageDtoConverter::toImageDto)
                 .toArray(ImageDto[]::new));
         return messageDto;
     }

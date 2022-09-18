@@ -6,6 +6,9 @@ import com.lambakean.representation.dto.ImageDto;
 import com.lambakean.representation.dtoConverter.ImageDtoConverter;
 import org.springframework.stereotype.Component;
 
+import java.util.Arrays;
+import java.util.Comparator;
+
 @Component
 public class ImageDtoConverterImpl implements ImageDtoConverter {
 
