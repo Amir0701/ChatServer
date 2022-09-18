@@ -24,7 +24,7 @@ public class Message {
     private LocalDateTime whenCreated;
 
 
-    @OneToMany(mappedBy = "message", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "message", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private Set<Image> images;
 
     public Long getChatId() {
