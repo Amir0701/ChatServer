@@ -101,13 +101,13 @@ public class ChatServiceImpl implements ChatService {
     @Override
     public ChatDto[] getChatsByUserId(Long userId) {
         Chat[] chats = chatRepository.getChatsByUserId(userId);
-        for (Chat chat : chats){
-            Set<Message> set = chat.getMessages();
-            for (Message message : set){
-                Image[] images = imageRepository.getImagesByMessageId(message.getId());
-                message.setImages(Arrays.stream(images).collect(Collectors.toSet()));
-            }
-        }
+//        for (Chat chat : chats){
+//            Set<Message> set = chat.getMessages();
+//            for (Message message : set){
+//                Image[] images = imageRepository.getImagesByMessageId(message.getId());
+//                message.setImages(Arrays.stream(images).collect(Collectors.toSet()));
+//            }
+//        }
 
         ChatDto[] chatDtos = new ChatDto[chats.length];
 

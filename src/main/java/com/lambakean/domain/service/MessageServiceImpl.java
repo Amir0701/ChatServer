@@ -28,6 +28,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 public class MessageServiceImpl implements MessageService{
@@ -116,7 +117,10 @@ public class MessageServiceImpl implements MessageService{
 
         for (int i = 0; i < multipartFile.length; i++){
             try {
-                Files.copy(multipartFile[i].getInputStream(), root.resolve(multipartFile[i].getOriginalFilename()));
+                File file = new File(root.resolve(multipartFile[i].getOriginalFilename()).toUri());
+                if (!file.exists()) file.mkdirs();
+                multipartFile[i].transferTo(file.getAbsoluteFile());
+                System.out.println("File name: " + multipartFile[i].getOriginalFilename());
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -133,10 +137,14 @@ public class MessageServiceImpl implements MessageService{
 
         Message newMessage = new Message();
         newMessage.setUser(user);
+        System.out.println("User ID: " + user.getId());
         newMessage.setWhenCreated(LocalDateTime.now());
         newMessage.setChat(chat);
-        messageRepository.save(newMessage);
+        System.out.println("Chat ID: " + chat.getId() );
 
+
+        newMessage.setImages(images.stream().collect(Collectors.toSet()));
+        messageRepository.save(newMessage);
         for(Image image: images){
             image.setMessage(newMessage);
             imageRepository.save(image);
