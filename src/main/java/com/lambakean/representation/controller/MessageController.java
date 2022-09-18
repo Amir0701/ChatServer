@@ -3,6 +3,7 @@ package com.lambakean.representation.controller;
 import com.lambakean.domain.service.MessageService;
 import com.lambakean.representation.dto.MessageDto;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
@@ -13,7 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 @RestController
 @RequestMapping("/api/v1/message")
 public class MessageController {
-    private MessageService messageService;
+    private final MessageService messageService;
 
     @Autowired
     public MessageController(MessageService messageService){
@@ -40,11 +41,8 @@ public class MessageController {
         return ResponseEntity.ok(messageService.getMessagesByChatId(chatId));
     }
 
-    //    @MessageMapping("/send")
-//    @SendTo("/topic/send")
-
-    @PostMapping(params = {"file", "chatId", "userId"})
-    public ResponseEntity<MessageDto> message(@RequestParam(value = "file") MultipartFile[] multipartFile,
+    @PostMapping("/upload")
+    public ResponseEntity<MessageDto> message(@RequestParam(value = "files") MultipartFile[] multipartFile,
                                               @RequestParam(value = "chatId") Long chatId,
                                               @RequestParam(value = "userId") Long userId) {
         return ResponseEntity.ok(messageService.add(multipartFile, chatId, userId));
