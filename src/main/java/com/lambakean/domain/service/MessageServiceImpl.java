@@ -30,7 +30,7 @@ import java.util.Arrays;
 import java.util.List;
 
 @Component
-public class MessageServiceImpl implements MessageService {
+public class MessageServiceImpl implements MessageService{
     private MessageDtoConverter messageDtoConverter;
     private MessageRepository messageRepository;
     private UserService userService;
@@ -42,7 +42,6 @@ public class MessageServiceImpl implements MessageService {
     private ImageDtoConverter imageDtoConverter;
 
     private static String path = "E:\\ChatPhoto\\";
-
     @Autowired
     public MessageServiceImpl(MessageDtoConverter messageDtoConverter,
                               MessageRepository messageRepository,
@@ -52,7 +51,7 @@ public class MessageServiceImpl implements MessageService {
                               ChatService chatService,
                               ChatDtoConverter chatDtoConverter,
                               ImageRepository imageRepository,
-                              ImageDtoConverter imageDtoConverter) {
+                              ImageDtoConverter imageDtoConverter){
         this.messageDtoConverter = messageDtoConverter;
         this.messageRepository = messageRepository;
         this.userService = userService;
@@ -69,7 +68,7 @@ public class MessageServiceImpl implements MessageService {
     public MessageDto create(MessageDto messageDto) {
         User user = userService.getCurrentUser();
 
-        if (user == null) {
+        if(user == null) {
             throw new UserNotLoggedInException("You have to log in to create chats");
         }
 
@@ -115,7 +114,7 @@ public class MessageServiceImpl implements MessageService {
         Path root = Paths.get(path + userId + "\\");
         List<Image> images = new ArrayList<>();
 
-        for (int i = 0; i < multipartFile.length; i++) {
+        for (int i = 0; i < multipartFile.length; i++){
             try {
                 Files.copy(multipartFile[i].getInputStream(), root.resolve(multipartFile[i].getOriginalFilename()));
             } catch (IOException e) {
@@ -138,7 +137,7 @@ public class MessageServiceImpl implements MessageService {
         newMessage.setChat(chat);
         messageRepository.save(newMessage);
 
-        for (Image image : images) {
+        for(Image image: images){
             image.setMessage(newMessage);
             imageRepository.save(image);
         }
