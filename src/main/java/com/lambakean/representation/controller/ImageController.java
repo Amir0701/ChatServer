@@ -54,6 +54,7 @@ public class ImageController {
         ByteArrayResource resource = null;
         try {
             resource = new ByteArrayResource(Files.readAllBytes(path));
+            System.out.println("DDDDD");
         } catch (IOException e) {
             e.printStackTrace();
         }

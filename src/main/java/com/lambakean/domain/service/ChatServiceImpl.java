@@ -17,9 +17,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Component
@@ -74,7 +72,7 @@ public class ChatServiceImpl implements ChatService {
 
         chat.setId(null);
         chat.setWhenCreated(LocalDateTime.now());
-        chat.setMessages(Collections.emptySet());
+        chat.setMessages(Collections.emptyList());
         chat.setSubscriptions(Collections.singleton(subscription));
 
         saveAndFlush(chat);
@@ -110,8 +108,11 @@ public class ChatServiceImpl implements ChatService {
 //        }
 
         ChatDto[] chatDtos = new ChatDto[chats.length];
-
         for (int i = 0; i < chats.length; i++){
+            chats[i].setMessages(chats[i].getMessages()
+                    .stream()
+                    .sorted(Comparator.comparing(Message::getId))
+                    .collect(Collectors.toList()));
             ChatDto chatDto = chatDtoConverter.toChatDto(chats[i]);
             chatDtos[i] = chatDto;
         }
