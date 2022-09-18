@@ -41,7 +41,7 @@ public class MessageServiceImpl implements MessageService {
     private ImageRepository imageRepository;
     private ImageDtoConverter imageDtoConverter;
 
-    private static String path = "E:\\ChatPhoto\\";
+    private static String path = "/opt/chatImages/";
 
     @Autowired
     public MessageServiceImpl(MessageDtoConverter messageDtoConverter,
@@ -112,18 +112,20 @@ public class MessageServiceImpl implements MessageService {
 
     @Override
     public MessageDto add(MultipartFile[] multipartFile, Long chatId, Long userId) {
-        Path root = Paths.get(path + userId + "\\");
+        Path root = Paths.get(path + userId + "/");
         List<Image> images = new ArrayList<>();
 
         for (int i = 0; i < multipartFile.length; i++) {
             try {
-                Files.copy(multipartFile[i].getInputStream(), root.resolve(multipartFile[i].getOriginalFilename()));
+                File file = new File(root.resolve(multipartFile[i].getOriginalFilename()).toUri());
+                if (!file.exists()) file.mkdirs();
+                multipartFile[i].transferTo(file.getAbsoluteFile());
             } catch (IOException e) {
                 e.printStackTrace();
             }
 
             Image newImage = new Image();
-            newImage.setUrl(path + userId + "\\" + multipartFile[i].getOriginalFilename());
+            newImage.setUrl(path + userId + "/" + multipartFile[i].getOriginalFilename());
             images.add(newImage);
         }
 
