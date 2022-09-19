@@ -1,6 +1,5 @@
 package com.lambakean.representation.controller;
 
-import com.lambakean.data.model.Chat;
 import com.lambakean.domain.service.ChatService;
 import com.lambakean.representation.dto.ChatDto;
 import com.lambakean.representation.dto.UserDto;
