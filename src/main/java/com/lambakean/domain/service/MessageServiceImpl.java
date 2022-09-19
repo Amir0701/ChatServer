@@ -120,7 +120,6 @@ public class MessageServiceImpl implements MessageService{
                 File file = new File(root.resolve(multipartFile[i].getOriginalFilename()).toUri());
                 if (!file.exists()) file.mkdirs();
                 multipartFile[i].transferTo(file.getAbsoluteFile());
-                System.out.println("File name: " + multipartFile[i].getOriginalFilename());
             } catch (IOException e) {
                 e.printStackTrace();
             }
