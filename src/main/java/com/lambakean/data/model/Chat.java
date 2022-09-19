@@ -2,6 +2,7 @@ package com.lambakean.data.model;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -24,7 +25,7 @@ public class Chat {
     private Set<Subscription> subscriptions;
 
     @OneToMany(mappedBy = "chat", fetch = FetchType.EAGER)
-    private Set<Message> messages;
+    private List<Message> messages;
 
     public Chat(Long id) {
         this.id = id;
@@ -65,11 +66,11 @@ public class Chat {
         this.subscriptions = subscriptions;
     }
 
-    public Set<Message> getMessages() {
+    public List<Message> getMessages() {
         return messages;
     }
 
-    public void setMessages(Set<Message> messages) {
+    public void setMessages(List<Message> messages) {
         this.messages = messages;
     }
 

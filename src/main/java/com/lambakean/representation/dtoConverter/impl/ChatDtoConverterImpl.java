@@ -1,6 +1,7 @@
 package com.lambakean.representation.dtoConverter.impl;
 
 import com.lambakean.data.model.Chat;
+import com.lambakean.data.model.Message;
 import com.lambakean.representation.dto.ChatDto;
 import com.lambakean.representation.dtoConverter.ChatDtoConverter;
 import com.lambakean.representation.dtoConverter.MessageDtoConverter;
@@ -9,7 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
@@ -39,10 +42,10 @@ public class ChatDtoConverterImpl implements ChatDtoConverter {
                     chatDto.getMessages()
                             .stream()
                             .map(messageDtoConverter::toMessage)
-                            .collect(Collectors.toSet())
+                            .collect(Collectors.toList())
             );
         } else {
-            chat.setMessages(new HashSet<>());
+            chat.setMessages(new ArrayList<>());
         }
 
         if(chatDto.getSubscriptions() != null) {
