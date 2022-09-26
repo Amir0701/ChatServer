@@ -115,20 +115,6 @@ public class MessageServiceImpl implements MessageService{
         Path root = Paths.get(path + userId + "\\");
         List<Image> images = new ArrayList<>();
 
-        for (int i = 0; i < multipartFile.length; i++){
-            try {
-                File file = new File(root.resolve(multipartFile[i].getOriginalFilename()).toUri());
-                if (!file.exists()) file.mkdirs();
-                multipartFile[i].transferTo(file.getAbsoluteFile());
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            Image newImage = new Image();
-            newImage.setUrl(path + userId + "\\" + multipartFile[i].getOriginalFilename());
-            images.add(newImage);
-        }
-
         UserDto userDto = userService.getUser(userId);
         User user = userDtoConverter.toUser(userDto);
         ChatDto chatDto = chatService.get(chatId);
@@ -136,14 +122,32 @@ public class MessageServiceImpl implements MessageService{
 
         Message newMessage = new Message();
         newMessage.setUser(user);
-        System.out.println("User ID: " + user.getId());
+
         newMessage.setWhenCreated(LocalDateTime.now());
         newMessage.setChat(chat);
-        System.out.println("Chat ID: " + chat.getId() );
 
 
         newMessage.setImages(images.stream().collect(Collectors.toSet()));
-        messageRepository.save(newMessage);
+        Message addedMessage = messageRepository.save(newMessage);
+
+        for (int i = 0; i < multipartFile.length; i++){
+            try {
+                File file = new File(root.resolve(multipartFile[i]
+                        .getOriginalFilename() + "(" + addedMessage.getId() + ")")
+                        .toUri());
+                if (!file.exists())
+                    file.mkdirs();
+                multipartFile[i].transferTo(file.getAbsoluteFile());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            Image newImage = new Image();
+            newImage.setUrl(path + userId + "\\" + multipartFile[i].getOriginalFilename() + "(" + addedMessage.getId() + ")");
+            images.add(newImage);
+        }
+
+
         for(Image image: images){
             image.setMessage(newMessage);
             imageRepository.save(image);
